@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+bin/
+
+config/dev.yaml
+
+go.sum
