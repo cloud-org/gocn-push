@@ -41,13 +41,13 @@ func (w *WeCom) NewsPushToWeCom() {
 			w.Flag = false
 			return
 		}
-		w.Flag = true
-		w.Pre = now
 		content := strings.Join(contents, "")
 		if err = w.Send(content); err != nil {
 			log.Printf("推送发生错误, err: %v\n", err)
 			return
 		}
+		w.Flag = true
+		w.Pre = now
 	}
 	return
 }

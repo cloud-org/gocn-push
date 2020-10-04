@@ -1,5 +1,9 @@
 dingtalk:
+  enable: false
+  spec: "* * * * *"
   token: xxx
 
 wecom:
+  enable: false
+  spec: "* * * * *"
   token: xxx

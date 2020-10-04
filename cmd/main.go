@@ -40,19 +40,7 @@ func main() {
 	config.SetConfig(filePath)
 
 	scheduler := server.NewScheduler()
-	d := server.NewDingTalk(config.Config.GetString("dingtalk.token"))
-	_, err := scheduler.C.AddFunc("* * * * *", d.NewsPushToDingTalk)
-	if err != nil {
-		log.Printf("添加任务失败, err: %v\n", err)
-		return
-	}
-	w := server.NewWeCom(config.Config.GetString("wecom.token"))
-	_, err = scheduler.C.AddFunc("* * * * *", w.NewsPushToWeCom)
-	if err != nil {
-		log.Printf("添加任务失败, err: %v\n", err)
-		return
-	}
-
+	scheduler.InitJob()
 	scheduler.Run()
 
 	c := make(chan os.Signal, 1)
