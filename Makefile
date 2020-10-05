@@ -2,12 +2,17 @@
 
 # set-env copy-config 在这里被依赖 在 build-master 和 build-worker 也被依赖，但是不会执行两次
 .PHONY: deploy
-deploy: set-env copy-config build upx
+deploy: set-env copy-config build-linux upx-linux
 
 .PHONY: build
 build: set-env copy-config
 	go build -v -o bin/gocn cmd/main.go
 	@echo "build gocn success"
+
+.PHONY: build-linux
+build-linux: set-env copy-config
+	GOOS=linux GOARCH=amd64 go build -v -o bin/gocn-linux cmd/main.go
+	@echo "build gocn-linux success"
 
 .PHONY: copy-config
 copy-config:
@@ -35,3 +40,7 @@ remove-none-images:
 .PHONY: upx
 upx:
 	upx -v bin/gocn
+
+.PHONY: upx-linux
+upx-linux:
+	upx -v bin/gocn-linux
