@@ -20,12 +20,11 @@ type WeCom struct {
 	Token  string
 	ReqUrl string
 	Pre    string
-	Flag   bool
 }
 
 //NewWeCom
-func NewWeCom(token string) *WeCom {
-	return &WeCom{Token: token, ReqUrl: wecomBase + token}
+func NewWeCom(token string, pre string) *WeCom {
+	return &WeCom{Token: token, ReqUrl: wecomBase + token, Pre: pre}
 }
 
 func (w *WeCom) Send(content string) error {

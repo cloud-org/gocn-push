@@ -31,7 +31,10 @@ func (s *Scheduler) InitJob() {
 
 	log.Printf("dingtalk enable is %v\n", config.Config.GetBool("dingtalk.enable"))
 	if config.Config.GetBool("dingtalk.enable") {
-		d := NewDingTalk(config.Config.GetString("dingtalk.token"))
+		d := NewDingTalk(
+			config.Config.GetString("dingtalk.token"),
+			config.Config.GetString("dingtalk.pre"),
+		)
 		_, err := s.C.AddFunc(config.Config.GetString("dingtalk.spec"), d.NewsPushToDingTalk)
 		if err != nil {
 			log.Printf("添加任务失败, err: %v\n", err)
@@ -41,7 +44,10 @@ func (s *Scheduler) InitJob() {
 
 	log.Printf("wecom enable is %v\n", config.Config.GetBool("wecom.enable"))
 	if config.Config.GetBool("wecom.enable") {
-		w := NewWeCom(config.Config.GetString("wecom.token"))
+		w := NewWeCom(
+			config.Config.GetString("wecom.token"),
+			config.Config.GetString("wecom.pre"),
+		)
 		_, err := s.C.AddFunc(config.Config.GetString("wecom.spec"), w.NewsPushToWeCom)
 		if err != nil {
 			log.Printf("添加任务失败, err: %v\n", err)

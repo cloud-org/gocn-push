@@ -22,11 +22,10 @@ type DingTalk struct {
 	Token  string
 	ReqUrl string
 	Pre    string // 日期不同则可以进行抓取了
-	Flag   bool   //是否需要抓取 如果当前日期和 pre 一直，Flag 如果是 false,则抓取
 }
 
-func NewDingTalk(token string) *DingTalk {
-	return &DingTalk{Token: token, ReqUrl: baseUrl + token}
+func NewDingTalk(token string, pre string) *DingTalk {
+	return &DingTalk{Token: token, ReqUrl: baseUrl + token, Pre: pre}
 }
 
 func (d *DingTalk) Send(content string) error {
