@@ -2,10 +2,11 @@ package server
 
 import (
 	"context"
-	"github.com/robfig/cron/v3"
-	"github.com/ronething/gocn-push/config"
 	"log"
 	"os"
+
+	"github.com/robfig/cron/v3"
+	"github.com/ronething/gocn-push/config"
 )
 
 type Scheduler struct {
@@ -49,6 +50,19 @@ func (s *Scheduler) InitJob() {
 			config.Config.GetString("wecom.pre"),
 		)
 		_, err := s.C.AddFunc(config.Config.GetString("wecom.spec"), w.NewsPushToWeCom)
+		if err != nil {
+			log.Printf("添加任务失败, err: %v\n", err)
+			return
+		}
+	}
+
+	log.Printf("slack enable is %v\n", config.Config.GetBool("slack.enable"))
+	if config.Config.GetBool("slack.enable") {
+		slack := NewSlack(
+			config.Config.GetString("slack.token"),
+			config.Config.GetString("slack.pre"),
+		)
+		_, err := s.C.AddFunc(config.Config.GetString("slack.spec"), slack.NewsPushToSlack)
 		if err != nil {
 			log.Printf("添加任务失败, err: %v\n", err)
 			return

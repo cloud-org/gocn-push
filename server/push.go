@@ -47,3 +47,23 @@ func (w *WeCom) NewsPushToWeCom() {
 	}
 	return
 }
+
+func (s *Slack) NewsPushToSlack() {
+	log.Printf("执行任务将 gocn 新闻推送到 Slack")
+	now := time.Now().Format(timeFormat)
+	log.Printf("slack pre is %v, now is %v\n", s.Pre, now)
+	if s.Pre != now { // 抓取
+		err, contents := GetNewsContent(time.Now())
+		if err != nil {
+			log.Printf("获取新闻发生错误, err: %v\n", err)
+			return
+		}
+		content := strings.Join(contents, "")
+		if err = s.Send(content); err != nil {
+			log.Printf("推送发生错误, err: %v\n", err)
+			return
+		}
+		s.Pre = now
+	}
+	return
+}
