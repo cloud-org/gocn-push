@@ -1,6 +1,6 @@
 # 两阶段构建 master
 FROM golang:1.14-alpine3.11 as BuildImage
-ENV WORKDIR /clock
+ENV WORKDIR /gocn
 WORKDIR $WORKDIR
 COPY . .
 RUN apk update && apk add --no-cache git ca-certificates make bash
