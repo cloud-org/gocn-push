@@ -13,6 +13,13 @@ type GocnNew struct {
 	Client *resty.Client
 }
 
+func NewGocnNew(client *resty.Client) *GocnNew {
+	if client == nil {
+		client = resty.New()
+	}
+	return &GocnNew{Client: client}
+}
+
 var headers = map[string]string{
 	"user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36",
 }
