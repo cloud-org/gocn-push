@@ -3,7 +3,7 @@ module github.com/ronething/gocn-push
 go 1.14
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/JohannesKaufmann/html-to-markdown v1.3.3
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.2 // indirect
 	github.com/go-resty/resty/v2 v2.7.0
@@ -15,6 +15,5 @@ require (
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/temoto/robotstxt v1.1.1 // indirect
-	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 )

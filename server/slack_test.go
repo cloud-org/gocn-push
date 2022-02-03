@@ -12,7 +12,8 @@ func TestSlack_Send(t *testing.T) {
 }
 
 func TestSlack_SendNews(t *testing.T) {
-	err, content := GetNewsContent(time.Now().Add(-24 * time.Hour))
+	g := NewGocnNew(nil)
+	err, content := g.GetNewsContent(time.Now())
 	if err != nil {
 		t.Fatalf("err:%v\n", err)
 	}

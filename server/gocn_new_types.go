@@ -41,16 +41,26 @@ type TopicInfoResp struct {
 	Data TopicInfoData `json:"data"`
 }
 
-type TopicInfoData struct {
+type Tdk struct {
+	Title       string `json:"title"`
+	Keywords    string `json:"keywords"`
+	Description string `json:"description"`
+}
+
+type Topic struct {
 	ID          int    `json:"id"`
 	UID         int    `json:"uid"`
 	Nickname    string `json:"nickname"`
 	Avatar      string `json:"avatar"`
 	Title       string `json:"title"`
-	Content     string `json:"content"` // 取出 content 即可
 	ContentHTML string `json:"contentHtml"`
 	Ctime       int    `json:"ctime"`
 	CntView     int    `json:"cntView"`
 	Cate2ID     int    `json:"cate2Id"`
 	Cate2Title  string `json:"cate2Title"`
+}
+
+type TopicInfoData struct {
+	Tdk   Tdk   `json:"tdk"`
+	Topic Topic `json:"topic"`
 }

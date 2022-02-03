@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	md "github.com/JohannesKaufmann/html-to-markdown"
+
 	"github.com/go-resty/resty/v2"
 )
 
@@ -58,10 +60,11 @@ func (g *GocnNew) GetNewsContent(publishTime time.Time) (error, []string) {
 	// 如果获取到对应的 topic，则可以进行主题的获取
 	topicId := newTopic.ID
 	// https://gocn.vip/api/topic/20991/info
+	// apiv2
 	resp, err = g.Client.R().
 		SetResult(&TopicInfoResp{}).
 		SetHeaders(headers).
-		Get(fmt.Sprintf("https://gocn.vip/api/topic/%d/info", topicId))
+		Get(fmt.Sprintf("https://gocn.vip/apiv2/topic/%d/info", topicId))
 	if err != nil {
 		log.Printf("request topic info err: %v", err)
 		log.Printf("err resp: %v", resp.String())
@@ -74,9 +77,18 @@ func (g *GocnNew) GetNewsContent(publishTime time.Time) (error, []string) {
 		return fmt.Errorf("topic info resp assert err"), nil
 	}
 
-	log.Printf("%v\n", value.Data.Content)
+	info := value.Data.Topic.ContentHTML
 
-	return nil, []string{value.Data.Content}
+	converter := md.NewConverter("", true, nil)
+
+	markdown, err := converter.ConvertString(info)
+	if err != nil {
+		// 转换失败直接赋值
+		log.Printf("convert err: %v\n", err)
+		markdown = info
+	}
+
+	return nil, []string{markdown}
 }
 
 func (g *GocnNew) containsDate(publishTime time.Time, title string) bool {

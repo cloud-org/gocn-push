@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/imroc/req"
 )
 
@@ -16,6 +17,13 @@ type weComSendTextContent struct {
 	} `json:"text"`
 }
 
+type weComSendMDContent struct {
+	Msgtype  string `json:"msgtype"`
+	Markdown struct {
+		Content string `json:"content"`
+	} `json:"markdown"`
+}
+
 type WeCom struct {
 	Token  string
 	ReqUrl string
@@ -28,7 +36,23 @@ func NewWeCom(token string, pre string) *WeCom {
 }
 
 func (w *WeCom) Send(content string) error {
-	return w.SendText(content)
+	return w.SendMd(content)
+}
+
+func (w *WeCom) SendMd(content string) error {
+	resp, err := req.Post(w.ReqUrl, req.BodyJSON(&weComSendMDContent{
+		Msgtype: "markdown",
+		Markdown: struct {
+			Content string `json:"content"`
+		}{
+			Content: content,
+		},
+	}))
+	if err != nil {
+		return err
+	}
+	fmt.Printf("resp is %v\n", resp.String())
+	return err
 }
 
 func (w *WeCom) SendText(content string) error {
