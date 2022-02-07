@@ -27,12 +27,11 @@ type weComSendMDContent struct {
 type WeCom struct {
 	Token  string
 	ReqUrl string
-	Pre    string
 }
 
 //NewWeCom
 func NewWeCom(token string, pre string) *WeCom {
-	return &WeCom{Token: token, ReqUrl: wecomBase + token, Pre: pre}
+	return &WeCom{Token: token, ReqUrl: wecomBase + token}
 }
 
 func (w *WeCom) Send(content string) error {
@@ -71,4 +70,8 @@ func (w *WeCom) SendText(content string) error {
 	}
 	fmt.Printf("resp is %v\n", resp.String())
 	return err
+}
+
+func (w *WeCom) String() string {
+	return "wecom"
 }

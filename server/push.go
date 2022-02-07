@@ -1,71 +1,65 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/go-resty/resty/v2"
+	"github.com/ronething/gocn-push/config"
 )
 
 //通用方法重构
 
-func (d *DingTalk) NewsPushToDingTalk() {
-	log.Printf("执行任务将 gocn 新闻推送到钉钉")
-	now := time.Now().Format(timeFormat)
-	log.Printf("dingtalk pre is %v, now is %v\n", d.Pre, now)
-	if d.Pre != now { // 抓取
-		err, contents := NewGocnNew(resty.New()).GetNewsContent(time.Now())
-		if err != nil {
-			log.Printf("获取新闻发生错误, err: %v\n", err)
-			return
-		}
-		content := strings.Join(contents, "")
-		if err = d.Send(content); err != nil {
-			log.Printf("推送发生错误, err: %v\n", err)
-			return
-		}
-		d.Pre = now
-	}
-	return
+type NewsPush struct {
+	Pre     string
+	Notifys []NotifyPush
 }
 
-func (w *WeCom) NewsPushToWeCom() {
-	log.Printf("执行任务将 gocn 新闻推送到企业微信")
-	now := time.Now().Format(timeFormat)
-	log.Printf("wecom pre is %v, now is %v\n", w.Pre, now)
-	if w.Pre != now { // 抓取
-		err, contents := NewGocnNew(resty.New()).GetNewsContent(time.Now())
+func (n *NewsPush) InitNotifys() error {
+	notifyValue := config.Config.GetStringMap("notify")
+	log.Printf("notifyValue is %v\n", notifyValue)
+	for software, value := range notifyValue {
+		data, err := json.Marshal(value)
 		if err != nil {
-			log.Printf("获取新闻发生错误, err: %v\n", err)
-			return
+			log.Printf("marshal err: %+v\n", err)
+			return err
 		}
-		content := strings.Join(contents, "")
-		if err = w.Send(content); err != nil {
-			log.Printf("推送发生错误, err: %v\n", err)
-			return
+		var tokenEnable TokenEnable
+		if err = json.Unmarshal(data, &tokenEnable); err != nil {
+			log.Printf("unmarshal err: %+v\n", err)
+			return err
 		}
-		w.Pre = now
+
+		log.Printf("software: %s, data: %v\n", software, tokenEnable)
+		if tokenEnable.Enable {
+			notifyPush, err := GetNotify(software, tokenEnable.Token)
+			if err != nil {
+				log.Printf("get notify err: %v\n", err)
+				return err
+			}
+			n.Notifys = append(n.Notifys, notifyPush)
+		}
 	}
-	return
+	log.Printf("len(n.Notifys): %d res: %v\n", len(n.Notifys), n.Notifys)
+	return nil
 }
 
-func (s *Slack) NewsPushToSlack() {
-	log.Printf("执行任务将 gocn 新闻推送到 Slack")
+func (n *NewsPush) Push() {
 	now := time.Now().Format(timeFormat)
-	log.Printf("slack pre is %v, now is %v\n", s.Pre, now)
-	if s.Pre != now { // 抓取
-		err, contents := NewGocnNew(resty.New()).GetNewsContent(time.Now())
+	if n.Pre != now {
+		err, contents := NewGocnNew(nil).GetNewsContent(time.Now())
 		if err != nil {
 			log.Printf("获取新闻发生错误, err: %v\n", err)
 			return
 		}
 		content := strings.Join(contents, "")
-		if err = s.Send(content); err != nil {
-			log.Printf("推送发生错误, err: %v\n", err)
-			return
+		for i := 0; i < len(n.Notifys); i++ {
+			if err = n.Notifys[i].Send(content); err != nil {
+				log.Printf("%s 推送发生错误, err: %v\n", n.Notifys[i].String(), err)
+				continue
+			}
 		}
-		s.Pre = now
+		n.Pre = now
 	}
-	return
 }

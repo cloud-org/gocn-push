@@ -16,7 +16,7 @@ type Slack struct {
 }
 
 func NewSlack(token string, pre string) *Slack {
-	return &Slack{ReqUrl: token, Pre: pre}
+	return &Slack{ReqUrl: token}
 }
 
 func (s *Slack) Send(content string) error {
@@ -30,4 +30,8 @@ func (s *Slack) sendText(content string) error {
 	}
 	fmt.Printf("resp is %v\n", resp.String())
 	return err
+}
+
+func (s *Slack) String() string {
+	return "slack"
 }

@@ -95,7 +95,8 @@ func (g *GocnNew) containsDate(publishTime time.Time, title string) bool {
 
 	data := publishTime.Format("2006-01-02")
 	dateOther := publishTime.Format("2006-01-2")
-	if strings.Contains(title, data) || strings.Contains(title, dateOther) {
+	dateOtherOther := publishTime.Format("2006-1-2")
+	if strings.Contains(title, data) || strings.Contains(title, dateOther) || strings.Contains(title, dateOtherOther) {
 		return true
 	}
 

@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/imroc/req"
 )
 
@@ -21,11 +22,10 @@ type SendTextContent struct {
 type DingTalk struct {
 	Token  string
 	ReqUrl string
-	Pre    string // 日期不同则可以进行抓取了
 }
 
 func NewDingTalk(token string, pre string) *DingTalk {
-	return &DingTalk{Token: token, ReqUrl: baseUrl + token, Pre: pre}
+	return &DingTalk{Token: token, ReqUrl: baseUrl + token}
 }
 
 func (d *DingTalk) Send(content string) error {
@@ -46,4 +46,8 @@ func (d *DingTalk) SendText(content string) error {
 	}
 	fmt.Printf("resp is %v\n", resp.String())
 	return err
+}
+
+func (d *DingTalk) String() string {
+	return "dingtalk"
 }

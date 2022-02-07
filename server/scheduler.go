@@ -5,8 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/robfig/cron/v3"
 	"github.com/ronething/gocn-push/config"
+
+	"github.com/robfig/cron/v3"
 )
 
 type Scheduler struct {
@@ -30,44 +31,20 @@ func (s *Scheduler) Run() {
 
 func (s *Scheduler) InitJob() {
 
-	log.Printf("dingtalk enable is %v\n", config.Config.GetBool("dingtalk.enable"))
-	if config.Config.GetBool("dingtalk.enable") {
-		d := NewDingTalk(
-			config.Config.GetString("dingtalk.token"),
-			config.Config.GetString("dingtalk.pre"),
-		)
-		_, err := s.C.AddFunc(config.Config.GetString("dingtalk.spec"), d.NewsPushToDingTalk)
-		if err != nil {
-			log.Printf("添加任务失败, err: %v\n", err)
-			return
-		}
+	cronSpec := config.Config.GetString("cron")
+	pre := config.Config.GetString("pre")
+	n := NewsPush{Pre: pre, Notifys: make([]NotifyPush, 0)}
+	//n := NewsPush{Pre: pre} 效果相同
+	err := n.InitNotifys()
+	if err != nil {
+		log.Fatalf("init notifys err: %v\n", err)
 	}
 
-	log.Printf("wecom enable is %v\n", config.Config.GetBool("wecom.enable"))
-	if config.Config.GetBool("wecom.enable") {
-		w := NewWeCom(
-			config.Config.GetString("wecom.token"),
-			config.Config.GetString("wecom.pre"),
-		)
-		_, err := s.C.AddFunc(config.Config.GetString("wecom.spec"), w.NewsPushToWeCom)
-		if err != nil {
-			log.Printf("添加任务失败, err: %v\n", err)
-			return
-		}
+	_, err = s.C.AddFunc(cronSpec, n.Push)
+	if err != nil {
+		log.Fatalf("add cron job err: %v", err)
 	}
 
-	log.Printf("slack enable is %v\n", config.Config.GetBool("slack.enable"))
-	if config.Config.GetBool("slack.enable") {
-		slack := NewSlack(
-			config.Config.GetString("slack.token"),
-			config.Config.GetString("slack.pre"),
-		)
-		_, err := s.C.AddFunc(config.Config.GetString("slack.spec"), slack.NewsPushToSlack)
-		if err != nil {
-			log.Printf("添加任务失败, err: %v\n", err)
-			return
-		}
-	}
 }
 
 func (s *Scheduler) Stop() context.Context {
