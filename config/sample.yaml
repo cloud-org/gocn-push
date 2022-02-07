@@ -1,9 +1,16 @@
-dingtalk:
-  enable: false
-  spec: "* * * * *"
-  token: xxx
+cron: "*/10 * * * *"
+pre: "2021-02-05"
+notify:
+  dingtalk:
+    enable: true
+    token: xxx
+  wecom:
+    enable: true
+    token: xxx
+  slack:
+    enable: true
+    token: xxx
+  pushdeer:
+    enable: true
+    token: xxx
 
-wecom:
-  enable: false
-  spec: "* * * * *"
-  token: xxx

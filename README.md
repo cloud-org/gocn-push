@@ -1,10 +1,12 @@
 ### gocn-push
 
-- push gocn news to dingtalk/wecom/slack
+- push gocn news to dingtalk/wecom/slack/pushdeer
 
 ### ChangeLog
 
+- 增加 pushdeer 通知支持
 - 小重构 定时任务只需要一个
+- 增加 slack 通知支持
 - 增加 spec、enable 选项
 - 初版
 

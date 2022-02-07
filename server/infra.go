@@ -22,6 +22,8 @@ func GetNotify(software, token string) (NotifyPush, error) {
 		return NewWeCom(token, ""), nil
 	case "slack": // slack 推送
 		return NewSlack(token, ""), nil
+	case "pushdeer":
+		return NewPushDeer(token), nil
 	default:
 		return nil, fmt.Errorf("暂时不支持类型 %v", software)
 	}
