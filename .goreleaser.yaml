@@ -1,0 +1,25 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+project_name: gocn-push
+
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: ./cmd
+    binary: gocn-push
+    ldflags: '-s -w'
+    goos:
+      - linux
+      - windows
+      - darwin
+archives:
+  - files:
+      - README.md
+    format_overrides:
+      - goos: windows
+        format: zip
+release:
+  prerelease: auto

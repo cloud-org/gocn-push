@@ -16,5 +16,4 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	gopkg.in/resty.v1 v1.12.0
 )
