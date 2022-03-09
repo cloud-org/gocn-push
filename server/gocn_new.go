@@ -34,7 +34,7 @@ func (g *GocnNew) GetNewsContent(publishTime time.Time) (error, []string) {
 		"grade":       "new",
 	}).SetResult(&TopicListResp{}).
 		SetHeaders(headers).
-		Get("https://gocn.vip/api/topic/list")
+		Get("https://gocn.vip/apiv3/topic/list")
 	if err != nil {
 		log.Printf("request topic list err: %v", err)
 		log.Printf("err resp: %v", resp.String())
@@ -58,13 +58,13 @@ func (g *GocnNew) GetNewsContent(publishTime time.Time) (error, []string) {
 	}
 
 	// 如果获取到对应的 topic，则可以进行主题的获取
-	topicId := newTopic.ID
+	topicId := newTopic.GUID
 	// https://gocn.vip/api/topic/20991/info
 	// apiv2
 	resp, err = g.Client.R().
 		SetResult(&TopicInfoResp{}).
 		SetHeaders(headers).
-		Get(fmt.Sprintf("https://gocn.vip/apiv2/topic/%d/info", topicId))
+		Get(fmt.Sprintf("https://gocn.vip/apiv3/topic/%s/info", topicId))
 	if err != nil {
 		log.Printf("request topic info err: %v", err)
 		log.Printf("err resp: %v", resp.String())

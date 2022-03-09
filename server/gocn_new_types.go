@@ -7,11 +7,11 @@ type TopicListResp struct {
 }
 
 type TopicList struct {
-	ID         int    `json:"id"` // topic id 重点
-	UID        int    `json:"uid,omitempty"`
-	Nickname   string `json:"nickname,omitempty"`
+	GUID       string `json:"guid"`
+	UID        int    `json:"uid"`
+	Nickname   string `json:"nickname"`
 	Avatar     string `json:"avatar"`
-	Title      string `json:"title"` // 重点
+	Title      string `json:"title"`
 	Summary    string `json:"summary"`
 	Ctime      int    `json:"ctime"`
 	CntView    int    `json:"cntView"`
@@ -20,7 +20,6 @@ type TopicList struct {
 	CntLike    int    `json:"cntLike,omitempty"`
 	CntCollect int    `json:"cntCollect,omitempty"`
 	CntReply   int    `json:"cntReply,omitempty"`
-	IsOldData  bool   `json:"isOldData,omitempty"`
 }
 
 type Pagination struct {
@@ -48,7 +47,7 @@ type Tdk struct {
 }
 
 type Topic struct {
-	ID          int    `json:"id"`
+	GUID        string `json:"guid"`
 	UID         int    `json:"uid"`
 	Nickname    string `json:"nickname"`
 	Avatar      string `json:"avatar"`

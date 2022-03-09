@@ -19,7 +19,7 @@ func TestGocnNew_GetNewsContent(t *testing.T) {
 	}{
 		{
 			name: "one",
-			args: args{publishTime: time.Now()},
+			args: args{publishTime: time.Now().Add(-24 * time.Hour)},
 			want: nil,
 		},
 	}
