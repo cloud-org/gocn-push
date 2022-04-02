@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/cloud-org/msgpush"
 	"log"
 	"os"
 
@@ -33,7 +34,7 @@ func (s *Scheduler) InitJob() {
 
 	cronSpec := config.Config.GetString("cron")
 	pre := config.Config.GetString("pre")
-	n := NewsPush{Pre: pre, Notifys: make([]NotifyPush, 0)}
+	n := NewsPush{Pre: pre, Notifys: make([]msgpush.NotifyPush, 0)}
 	//n := NewsPush{Pre: pre} 效果相同
 	err := n.InitNotifys()
 	if err != nil {

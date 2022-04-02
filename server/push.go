@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/cloud-org/msgpush"
 	"log"
 	"strings"
 	"time"
@@ -13,7 +14,7 @@ import (
 
 type NewsPush struct {
 	Pre     string
-	Notifys []NotifyPush
+	Notifys []msgpush.NotifyPush
 }
 
 func (n *NewsPush) InitNotifys() error {
