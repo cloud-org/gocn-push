@@ -2,10 +2,11 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/cloud-org/msgpush"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/cloud-org/msgpush"
 
 	"github.com/ronething/gocn-push/config"
 )
@@ -49,7 +50,7 @@ func (n *NewsPush) InitNotifys() error {
 func (n *NewsPush) Push() {
 	now := time.Now().Format(timeFormat)
 	if n.Pre != now {
-		err, contents := NewGocnNew(nil).GetNewsContent(time.Now())
+		err, contents := NewGoCnNew2023(nil).GetNewsContent(time.Now())
 		if err != nil {
 			log.Printf("获取新闻发生错误, err: %v\n", err)
 			return
