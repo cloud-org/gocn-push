@@ -129,7 +129,11 @@ func (g *GoCnNew2023) parseContent(title string, data string) (*string, error) {
 		if len(nodeTexts)&1 == 0 && len(nodeTexts) >= 8 { // 偶数 正文
 			count := 1
 			for i := 0; i < len(nodeTexts); i = i + 2 {
-				news.WriteString(fmt.Sprintf("%d. %s %s\n", count, nodeTexts[i], nodeTexts[i+1]))
+				record := fmt.Sprintf("%d. %s %s\n", count, nodeTexts[i], nodeTexts[i+1])
+				if strings.HasPrefix(nodeTexts[i], fmt.Sprintf("%d", count)) {
+					record = fmt.Sprintf("%s %s\n", nodeTexts[i], nodeTexts[i+1])
+				}
+				news.WriteString(record)
 				count++
 			}
 			news.WriteString("\n")
@@ -170,8 +174,9 @@ type Node struct {
 //getText 递归获取 texts
 func getText(node *Node) []string {
 	var texts []string
-	if node.Text != "" {
-		texts = append(texts, node.Text)
+	text := strings.TrimSpace(strings.Trim(node.Text, "\n"))
+	if text != "" {
+		texts = append(texts, text)
 	}
 
 	for _, child := range node.Children {
