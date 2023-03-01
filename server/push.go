@@ -57,6 +57,13 @@ func (n *NewsPush) Push() {
 		}
 		content := strings.Join(contents, "")
 		for i := 0; i < len(n.Notifys); i++ {
+			if n.Notifys[i].String() == "wecom" { // send text
+				w := n.Notifys[i].(*msgpush.WeCom)
+				if err = w.SendText(content); err != nil {
+					log.Printf("wecom 推送失败, err: %v\n", err)
+				}
+				continue
+			}
 			if err = n.Notifys[i].Send(content); err != nil {
 				log.Printf("%s 推送发生错误, err: %v\n", n.Notifys[i].String(), err)
 				continue
