@@ -1,13 +1,13 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/go-resty/resty/v2"
 )
 
@@ -119,50 +119,26 @@ func (g *GoCnNew2023) parseContent(title string, data string) (*string, error) {
 		return nil, err
 	}
 
-	var news bytes.Buffer
-	news.WriteString(title + "\n\n")
+	var texts []string
 	for _, node := range nodes {
 		nodeTexts := getText(node)
-		if len(nodeTexts) <= 1 { // 长度为 0 或者是标题
-			continue
-		}
-		if len(nodeTexts)&1 == 0 && len(nodeTexts) >= 8 { // 偶数 正文
-			count := 1
-			for i := 0; i < len(nodeTexts); i = i + 2 {
-				record := fmt.Sprintf("%d. %s %s\n", count, nodeTexts[i], nodeTexts[i+1])
-				if strings.HasPrefix(nodeTexts[i], fmt.Sprintf("%d", count)) {
-					record = fmt.Sprintf("%s %s\n", nodeTexts[i], nodeTexts[i+1])
-				}
-				news.WriteString(record)
-				count++
-			}
-			news.WriteString("\n")
-		}
-		if len(nodeTexts)&1 == 0 && len(nodeTexts) <= 4 { // 偶数 可能是宣传链接之类
-			for i := 0; i < len(nodeTexts); i = i + 2 {
-				news.WriteString(fmt.Sprintf("%s %s\n", nodeTexts[i], nodeTexts[i+1]))
-			}
-			news.WriteString("\n")
-		}
-		if len(nodeTexts)&1 == 1 { //奇数 编辑信息
-			news.WriteString(nodeTexts[0] + "\n")
-			// 适配奇怪的渲染 有些是 text 和 url 分开 有些则不是
-			if len(nodeTexts) <= 3 {
-				for i := 1; i < len(nodeTexts); i++ {
-					news.WriteString(fmt.Sprintf("%s\n", nodeTexts[i]))
-				}
-			}
-			if len(nodeTexts) > 3 {
-				for i := 1; i < len(nodeTexts); i = i + 2 {
-					news.WriteString(fmt.Sprintf("%s %s\n", nodeTexts[i], nodeTexts[i+1]))
-				}
-			}
-		}
+		//fmt.Println("node texts is ", nodeTexts, len(nodeTexts))
+		texts = append(texts, nodeTexts...)
 	}
 
-	res := news.String()
+	//fmt.Println(texts)
+	info := buildMarkdown(texts)
 
-	return &res, nil
+	converter := md.NewConverter("", true, nil)
+
+	markdown, err := converter.ConvertString(info)
+	if err != nil {
+		// 转换失败直接赋值
+		log.Printf("convert err: %v\n", err)
+		markdown = info
+	}
+
+	return &markdown, nil
 }
 
 type Node struct {
@@ -174,6 +150,9 @@ type Node struct {
 //getText 递归获取 texts
 func getText(node *Node) []string {
 	var texts []string
+	if node.Type != "" {
+		texts = append(texts, node.Type)
+	}
 	text := strings.TrimSpace(strings.Trim(node.Text, "\n"))
 	if text != "" {
 		texts = append(texts, text)
@@ -185,4 +164,38 @@ func getText(node *Node) []string {
 	}
 
 	return texts
+}
+
+func buildMarkdown(data []string) string {
+
+	var result strings.Builder
+	var stack []string
+	var stackText []string
+
+	for i := 0; i < len(data); i++ {
+		item := data[i]
+		switch item {
+		case "li", "ol", "ul", "h1", "h2":
+			if len(stack) > 0 && len(stackText) > 0 {
+				result.WriteString(fmt.Sprintf("</%s>\n", stack[len(stack)-1]))
+				stack = stack[:len(stack)-1]
+				stackText = stackText[:len(stackText)-1]
+			}
+			result.WriteString(fmt.Sprintf("<%s>", item))
+			stack = append(stack, item)
+		case "lic", "p", "code_line", "code_block": // pass
+		case "a":
+			result.WriteString(fmt.Sprintf("<a href=\"%s\">%s</a>", data[i+1], data[i+1]))
+			i = i + 1
+		default:
+			result.WriteString(item)
+			stackText = append(stackText, item)
+		}
+	}
+
+	for i := len(stack) - 1; i >= 0; i-- {
+		result.WriteString(fmt.Sprintf("</%s>", stack[i]))
+	}
+
+	return result.String()
 }
