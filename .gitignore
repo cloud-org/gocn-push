@@ -1,3 +1,5 @@
+.DS_Store
+
 .idea/
 .vscode/
 bin/
@@ -6,3 +8,4 @@ config/dev.yaml
 
 go.sum
 dist/
+

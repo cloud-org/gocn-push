@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/JohannesKaufmann/html-to-markdown v1.3.3
-	github.com/cloud-org/msgpush v0.0.2
+	github.com/cloud-org/msgpush v0.0.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gocolly/colly v1.2.0
 	github.com/robfig/cron/v3 v3.0.1
